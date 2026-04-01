@@ -1,0 +1,18 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/favicon.ico/route": "/favicon.ico",
+  "/register/page": "/register",
+  "/page": "/",
+  "/login/page": "/login",
+  "/(app)/trips/page": "/trips",
+  "/(app)/profile/page": "/profile",
+  "/(app)/trips/[tripId]/house-details/page": "/trips/[tripId]/house-details",
+  "/(app)/trips/[tripId]/manage/page": "/trips/[tripId]/manage",
+  "/(app)/trips/[tripId]/invite/page": "/trips/[tripId]/invite",
+  "/(app)/trips/[tripId]/history/page": "/trips/[tripId]/history",
+  "/(app)/trips/[tripId]/page": "/trips/[tripId]",
+  "/(app)/trips/[tripId]/member-payment/page": "/trips/[tripId]/member-payment",
+  "/(app)/trips/[tripId]/expenses/page": "/trips/[tripId]/expenses",
+  "/(app)/trips/[tripId]/supplies/page": "/trips/[tripId]/supplies",
+  "/(app)/trips/[tripId]/carpool/page": "/trips/[tripId]/carpool"
+}
