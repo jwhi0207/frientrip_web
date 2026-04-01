@@ -1,0 +1,156 @@
+{
+  "version": 3,
+  "pages404": true,
+  "caseSensitive": false,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/:path+/",
+      "destination": "/:path+",
+      "internal": true,
+      "statusCode": 308,
+      "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
+    }
+  ],
+  "headers": [],
+  "rewrites": {
+    "beforeFiles": [],
+    "afterFiles": [],
+    "fallback": []
+  },
+  "dynamicRoutes": [
+    {
+      "page": "/trips/[tripId]",
+      "regex": "^/trips/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPtripId": "nxtPtripId"
+      },
+      "namedRegex": "^/trips/(?<nxtPtripId>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/trips/[tripId]/carpool",
+      "regex": "^/trips/([^/]+?)/carpool(?:/)?$",
+      "routeKeys": {
+        "nxtPtripId": "nxtPtripId"
+      },
+      "namedRegex": "^/trips/(?<nxtPtripId>[^/]+?)/carpool(?:/)?$"
+    },
+    {
+      "page": "/trips/[tripId]/expenses",
+      "regex": "^/trips/([^/]+?)/expenses(?:/)?$",
+      "routeKeys": {
+        "nxtPtripId": "nxtPtripId"
+      },
+      "namedRegex": "^/trips/(?<nxtPtripId>[^/]+?)/expenses(?:/)?$"
+    },
+    {
+      "page": "/trips/[tripId]/history",
+      "regex": "^/trips/([^/]+?)/history(?:/)?$",
+      "routeKeys": {
+        "nxtPtripId": "nxtPtripId"
+      },
+      "namedRegex": "^/trips/(?<nxtPtripId>[^/]+?)/history(?:/)?$"
+    },
+    {
+      "page": "/trips/[tripId]/house-details",
+      "regex": "^/trips/([^/]+?)/house\\-details(?:/)?$",
+      "routeKeys": {
+        "nxtPtripId": "nxtPtripId"
+      },
+      "namedRegex": "^/trips/(?<nxtPtripId>[^/]+?)/house\\-details(?:/)?$"
+    },
+    {
+      "page": "/trips/[tripId]/invite",
+      "regex": "^/trips/([^/]+?)/invite(?:/)?$",
+      "routeKeys": {
+        "nxtPtripId": "nxtPtripId"
+      },
+      "namedRegex": "^/trips/(?<nxtPtripId>[^/]+?)/invite(?:/)?$"
+    },
+    {
+      "page": "/trips/[tripId]/manage",
+      "regex": "^/trips/([^/]+?)/manage(?:/)?$",
+      "routeKeys": {
+        "nxtPtripId": "nxtPtripId"
+      },
+      "namedRegex": "^/trips/(?<nxtPtripId>[^/]+?)/manage(?:/)?$"
+    },
+    {
+      "page": "/trips/[tripId]/member-payment",
+      "regex": "^/trips/([^/]+?)/member\\-payment(?:/)?$",
+      "routeKeys": {
+        "nxtPtripId": "nxtPtripId"
+      },
+      "namedRegex": "^/trips/(?<nxtPtripId>[^/]+?)/member\\-payment(?:/)?$"
+    },
+    {
+      "page": "/trips/[tripId]/supplies",
+      "regex": "^/trips/([^/]+?)/supplies(?:/)?$",
+      "routeKeys": {
+        "nxtPtripId": "nxtPtripId"
+      },
+      "namedRegex": "^/trips/(?<nxtPtripId>[^/]+?)/supplies(?:/)?$"
+    }
+  ],
+  "staticRoutes": [
+    {
+      "page": "/",
+      "regex": "^/(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/(?:/)?$"
+    },
+    {
+      "page": "/_not-found",
+      "regex": "^/_not\\-found(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/favicon.ico",
+      "regex": "^/favicon\\.ico(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/favicon\\.ico(?:/)?$"
+    },
+    {
+      "page": "/login",
+      "regex": "^/login(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/login(?:/)?$"
+    },
+    {
+      "page": "/profile",
+      "regex": "^/profile(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/profile(?:/)?$"
+    },
+    {
+      "page": "/register",
+      "regex": "^/register(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/register(?:/)?$"
+    },
+    {
+      "page": "/trips",
+      "regex": "^/trips(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/trips(?:/)?$"
+    }
+  ],
+  "dataRoutes": [],
+  "rsc": {
+    "header": "rsc",
+    "varyHeader": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "prefetchHeader": "next-router-prefetch",
+    "didPostponeHeader": "x-nextjs-postponed",
+    "contentTypeHeader": "text/x-component",
+    "suffix": ".rsc",
+    "prefetchSuffix": ".prefetch.rsc",
+    "prefetchSegmentHeader": "next-router-segment-prefetch",
+    "prefetchSegmentSuffix": ".segment.rsc",
+    "prefetchSegmentDirSuffix": ".segments"
+  },
+  "rewriteHeaders": {
+    "pathHeader": "x-nextjs-rewritten-path",
+    "queryHeader": "x-nextjs-rewritten-query"
+  }
+}
