@@ -31,19 +31,42 @@ export default function DashboardView() {
 
   const [trip, setTrip] = useState<Trip | null>(null);
   const [members, setMembers] = useState<TripMember[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [tripReady, setTripReady] = useState(false);
+  const [membersReady, setMembersReady] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const loading = !tripReady || !membersReady;
 
   useEffect(() => {
     if (!tripId) return;
 
-    const unsubTrip = subscribeToTrip(tripId, (t) => {
-      setTrip(t);
-      setLoading(false);
-    });
+    setTripReady(false);
+    setMembersReady(false);
+    setError(null);
 
-    const unsubMembers = subscribeToMembers(tripId, (m) => {
-      setMembers(m);
-    });
+    const unsubTrip = subscribeToTrip(
+      tripId,
+      (t) => {
+        setTrip(t);
+        setTripReady(true);
+      },
+      (err) => {
+        setError(err.message);
+        setTripReady(true);
+      }
+    );
+
+    const unsubMembers = subscribeToMembers(
+      tripId,
+      (m) => {
+        setMembers(m);
+        setMembersReady(true);
+      },
+      (err) => {
+        console.error("subscribeToMembers error:", err);
+        setMembersReady(true);
+      }
+    );
 
     return () => {
       unsubTrip();
@@ -59,6 +82,17 @@ export default function DashboardView() {
     );
   }
 
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="text-center space-y-2">
+          <p className="text-red-500 font-medium">Failed to load trip</p>
+          <p className="text-sm text-gray-400">{error}</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!trip) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
@@ -67,7 +101,7 @@ export default function DashboardView() {
     );
   }
 
-  const activeMembers = members.filter((m) => m.status === "active");
+  const activeMembers = members.filter((m) => m.status !== "deactivated");
   const shares = calculateMemberShares(
     trip.totalCost,
     trip.totalNights,

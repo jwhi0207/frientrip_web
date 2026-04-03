@@ -90,7 +90,7 @@ export default function ManageView() {
 
   const isOwner = trip?.ownerId === user?.uid;
 
-  const activeMembers = members.filter((m) => m.status === "active");
+  const activeMembers = members.filter((m) => m.status !== "deactivated");
   const deactivatedMembers = members.filter((m) => m.status === "deactivated");
 
   const shares = trip

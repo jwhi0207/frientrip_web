@@ -31,7 +31,7 @@ export function calculateMemberShares(
   // For each night, split cost among members present
   for (let night = 1; night <= totalNights; night++) {
     const presentMembers = members.filter(
-      (m) => m.status === "active" && m.nightsStayed >= night
+      (m) => m.status !== "deactivated" && m.nightsStayed >= night
     );
 
     if (presentMembers.length === 0) continue;

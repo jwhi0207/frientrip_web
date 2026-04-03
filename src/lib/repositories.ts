@@ -94,7 +94,7 @@ export function subscribeToTrips(
     where("memberIds", "array-contains", userId)
   );
   return onSnapshot(q, (snap) => {
-    callback(snap.docs.map((d) => d.data() as Trip));
+    callback(snap.docs.map((d) => ({ id: d.id, ...d.data() } as Trip)));
   });
 }
 
@@ -107,26 +107,49 @@ export function subscribeToPendingInvites(
     where("pendingInviteEmails", "array-contains", email)
   );
   return onSnapshot(q, (snap) => {
-    callback(snap.docs.map((d) => d.data() as Trip));
+    callback(snap.docs.map((d) => ({ id: d.id, ...d.data() } as Trip)));
   });
 }
 
 export function subscribeToTrip(
   tripId: string,
-  callback: (trip: Trip | null) => void
+  callback: (trip: Trip | null) => void,
+  onError?: (error: Error) => void
 ): Unsubscribe {
-  return onSnapshot(doc(db, "trips", tripId), (snap) => {
-    callback(snap.exists() ? (snap.data() as Trip) : null);
-  });
+  return onSnapshot(
+    doc(db, "trips", tripId),
+    (snap) => {
+      callback(snap.exists() ? ({ id: snap.id, ...snap.data() } as Trip) : null);
+    },
+    (error) => {
+      console.error("subscribeToTrip error:", error);
+      onError?.(error);
+    }
+  );
 }
 
 export function subscribeToMembers(
   tripId: string,
-  callback: (members: TripMember[]) => void
+  callback: (members: TripMember[]) => void,
+  onError?: (error: Error) => void
 ): Unsubscribe {
-  return onSnapshot(collection(db, "trips", tripId, "members"), (snap) => {
-    callback(snap.docs.map((d) => d.data() as TripMember));
-  });
+  return onSnapshot(
+    collection(db, "trips", tripId, "members"),
+    (snap) => {
+      callback(
+        snap.docs.map((d) => ({
+          status: "active",
+          pendingPaymentAmount: 0,
+          pendingPaymentStatus: "none",
+          ...d.data(),
+        } as TripMember))
+      );
+    },
+    (error) => {
+      console.error("subscribeToMembers error:", error);
+      onError?.(error);
+    }
+  );
 }
 
 export function subscribeToSupplies(
@@ -138,7 +161,7 @@ export function subscribeToSupplies(
     orderBy("sortOrder")
   );
   return onSnapshot(q, (snap) => {
-    callback(snap.docs.map((d) => d.data() as SupplyItem));
+    callback(snap.docs.map((d) => ({ id: d.id, ...d.data() } as SupplyItem)));
   });
 }
 
@@ -147,7 +170,7 @@ export function subscribeToRides(
   callback: (rides: Ride[]) => void
 ): Unsubscribe {
   return onSnapshot(collection(db, "trips", tripId, "rides"), (snap) => {
-    callback(snap.docs.map((d) => d.data() as Ride));
+    callback(snap.docs.map((d) => ({ id: d.id, ...d.data() } as Ride)));
   });
 }
 
@@ -165,7 +188,7 @@ export function subscribeToExpenses(
   callback: (expenses: SharedExpense[]) => void
 ): Unsubscribe {
   return onSnapshot(collection(db, "trips", tripId, "expenses"), (snap) => {
-    callback(snap.docs.map((d) => d.data() as SharedExpense));
+    callback(snap.docs.map((d) => ({ id: d.id, ...d.data() } as SharedExpense)));
   });
 }
 
@@ -178,7 +201,7 @@ export function subscribeToHistory(
     orderBy("timestamp", "desc")
   );
   return onSnapshot(q, (snap) => {
-    callback(snap.docs.map((d) => d.data() as TripHistoryEvent));
+    callback(snap.docs.map((d) => ({ id: d.id, ...d.data() } as TripHistoryEvent)));
   });
 }
 
@@ -192,7 +215,7 @@ export function subscribeToPaymentHistory(
     orderBy("timestamp", "desc")
   );
   return onSnapshot(q, (snap) => {
-    callback(snap.docs.map((d) => d.data() as PaymentEvent));
+    callback(snap.docs.map((d) => ({ id: d.id, ...d.data() } as PaymentEvent)));
   });
 }
 
@@ -253,7 +276,7 @@ export async function joinTripByCode(
   if (snap.empty) return null;
 
   const tripDoc = snap.docs[0];
-  const trip = tripDoc.data() as Trip;
+  const trip = { id: tripDoc.id, ...tripDoc.data() } as Trip;
 
   if (trip.memberIds.includes(userProfile.uid)) return trip.id;
 
@@ -291,7 +314,7 @@ export async function deactivateMember(tripId: string, memberId: string) {
   // Unclaim supplies
   const suppliesSnap = await getDocs(collection(db, "trips", tripId, "supplies"));
   for (const supDoc of suppliesSnap.docs) {
-    const item = supDoc.data() as SupplyItem;
+    const item = { id: supDoc.id, ...supDoc.data() } as SupplyItem;
     if (item.claimedByUids.includes(memberId)) {
       const newUids = item.claimedByUids.filter((u) => u !== memberId);
       // Rebuild claimed names
@@ -313,7 +336,7 @@ export async function deactivateMember(tripId: string, memberId: string) {
   // Remove from rides as passenger, handle driven rides
   const ridesSnap = await getDocs(collection(db, "trips", tripId, "rides"));
   for (const rideDoc of ridesSnap.docs) {
-    const ride = rideDoc.data() as Ride;
+    const ride = { id: rideDoc.id, ...rideDoc.data() } as Ride;
     if (ride.driverUid === memberId) {
       // Move passengers to ride requests
       for (let i = 0; i < ride.passengerUids.length; i++) {

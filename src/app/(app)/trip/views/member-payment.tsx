@@ -52,7 +52,7 @@ export default function MemberPaymentView() {
     };
   }, [tripId]);
 
-  const activeMembers = members.filter((m) => m.status === "active");
+  const activeMembers = members.filter((m) => m.status !== "deactivated");
   const currentMember = members.find((m) => m.uid === user?.uid);
 
   const shares =
