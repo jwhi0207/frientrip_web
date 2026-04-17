@@ -233,20 +233,21 @@ export default function ManageView() {
                     )}
                   </div>
 
-                  {/* Actions (non-owner only) */}
+                  {/* Actions */}
+                  <div className="flex gap-2 shrink-0">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditNightsValue(member.nightsStayed);
+                        setEditNightsModal(member);
+                      }}
+                      className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      title="Edit Nights"
+                    >
+                      <HiPencilSquare className="w-5 h-5" />
+                    </button>
                   {!isMemberOwner && (
-                    <div className="flex gap-2 shrink-0">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setEditNightsValue(member.nightsStayed);
-                          setEditNightsModal(member);
-                        }}
-                        className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                        title="Edit Nights"
-                      >
-                        <HiPencilSquare className="w-5 h-5" />
-                      </button>
+                    <>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -267,8 +268,9 @@ export default function ManageView() {
                       >
                         <HiXCircle className="w-5 h-5" />
                       </button>
-                    </div>
+                    </>
                   )}
+                  </div>
                 </div>
               );
             })}

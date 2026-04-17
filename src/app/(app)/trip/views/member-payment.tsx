@@ -7,17 +7,21 @@ import {
   subscribeToTrip,
   subscribeToMembers,
   submitPendingPayment,
+  updateMember,
 } from "@/lib/repositories";
 import {
   calculateMemberShares,
   calculateBalance,
 } from "@/lib/costCalculator";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import Modal from "@/components/Modal";
 import {
   HiCurrencyDollar,
   HiCheckCircle,
   HiExclamationCircle,
   HiClock,
+  HiMoon,
+  HiPencilSquare,
 } from "react-icons/hi2";
 
 import type { Trip, TripMember } from "@/lib/models";
@@ -37,6 +41,9 @@ export default function MemberPaymentView() {
   const [loading, setLoading] = useState(true);
   const [paymentAmount, setPaymentAmount] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [editNightsOpen, setEditNightsOpen] = useState(false);
+  const [editNightsValue, setEditNightsValue] = useState(0);
+  const [savingNights, setSavingNights] = useState(false);
 
   useEffect(() => {
     const unsubTrip = subscribeToTrip(tripId, (t: Trip | null) => {
@@ -64,6 +71,17 @@ export default function MemberPaymentView() {
   const balance = currentMember
     ? calculateBalance(share, currentMember.amountPaid)
     : 0;
+
+  const handleEditNights = async () => {
+    if (!user || savingNights) return;
+    setSavingNights(true);
+    try {
+      await updateMember(tripId, user.uid, { nightsStayed: editNightsValue });
+      setEditNightsOpen(false);
+    } finally {
+      setSavingNights(false);
+    }
+  };
 
   const handleSubmit = async () => {
     if (!user || submitting) return;
@@ -155,6 +173,32 @@ export default function MemberPaymentView() {
         </div>
       )}
 
+      {/* Nights Stayed */}
+      <div className="bg-white rounded-lg border p-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <HiMoon className="w-5 h-5 text-indigo-500" />
+          <div>
+            <p className="text-sm font-medium text-gray-700">Nights Staying</p>
+            <p className="text-lg font-semibold text-gray-900">
+              {currentMember.nightsStayed}{" "}
+              <span className="text-sm font-normal text-gray-500">
+                {currentMember.nightsStayed === 1 ? "night" : "nights"}
+              </span>
+            </p>
+          </div>
+        </div>
+        <button
+          onClick={() => {
+            setEditNightsValue(currentMember.nightsStayed);
+            setEditNightsOpen(true);
+          }}
+          className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+        >
+          <HiPencilSquare className="w-4 h-4" />
+          Edit
+        </button>
+      </div>
+
       {/* Submit Payment */}
       <div className="bg-white rounded-lg border p-4 space-y-4">
         <h3 className="font-semibold flex items-center gap-2">
@@ -193,6 +237,51 @@ export default function MemberPaymentView() {
           )}
         </button>
       </div>
+      {/* Edit Nights Modal */}
+      <Modal
+        open={editNightsOpen}
+        onClose={() => setEditNightsOpen(false)}
+        title="Update Nights Staying"
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-gray-500">
+            How many nights will you be staying on this trip?
+          </p>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Nights
+            </label>
+            <input
+              type="number"
+              min={0}
+              max={trip?.totalNights ?? 99}
+              value={editNightsValue}
+              onChange={(e) => setEditNightsValue(parseInt(e.target.value) || 0)}
+              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+            {trip?.totalNights ? (
+              <p className="text-xs text-gray-400 mt-1">
+                Trip is {trip.totalNights} night{trip.totalNights !== 1 ? "s" : ""} total
+              </p>
+            ) : null}
+          </div>
+          <div className="flex justify-end gap-2">
+            <button
+              onClick={() => setEditNightsOpen(false)}
+              className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleEditNights}
+              disabled={savingNights}
+              className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 rounded-lg transition-colors"
+            >
+              {savingNights ? "Saving..." : "Save"}
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
